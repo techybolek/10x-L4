@@ -85,16 +85,23 @@ jobs:
         
       - name: Wait for app to be ready
         run: |
-          timeout=30
-          while ! nc -z localhost 3000; do
+          echo "Waiting for app to be ready..."
+          # Increase timeout to 60 seconds
+          timeout=60
+          while ! curl -s http://localhost:3000 > /dev/null; do
             if [ $timeout -le 0 ]; then
               echo "Timeout waiting for app to start"
+              echo "Checking running processes:"
+              ps aux | grep node
+              echo "Checking port 3000:"
+              netstat -tulpn | grep 3000
               exit 1
             fi
-            echo "Waiting for app to be ready..."
-            sleep 1
-            timeout=$((timeout - 1))
+            echo "Waiting... ($timeout seconds remaining)"
+            sleep 2
+            timeout=$((timeout - 2))
           done
+          echo "Application is ready!"
         
       - name: Run E2E tests
         run: npm run test:e2e
