@@ -82,7 +82,7 @@ jobs:
             npm-debug.log*
 
   status-comment:
-    needs: [unit-test, e2e-test]
+    needs: [e2e-test]
     name: PR Status Comment
     runs-on: ubuntu-latest
     if: always()
@@ -95,17 +95,13 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const unitTestCoverage = require('./unit-test-coverage/coverage-summary.json');
             
             const statusComment = `## Pull Request Check Results 🎯
             
             ### Test Coverage Summary
-            - Unit Tests: ${unitTestCoverage.total.lines.pct}% lines covered
             - E2E Tests: Completed ✅
             
             ### Detailed Results
-            - Linting: ✅ Passed
-            - Unit Tests: ✅ Passed
             - E2E Tests: ✅ Passed
             
             [View detailed Playwright report](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID})
