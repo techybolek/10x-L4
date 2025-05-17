@@ -21,13 +21,21 @@ export class TestPage {
     console.log('Navigation status:', response?.status());
     console.log('Current URL:', this.page.url());
     
-    // Take a screenshot before waiting for the form
-    await this.page.screenshot({ path: 'debug-before-form-wait.png' });
+    // Wait for client-side hydration
+    await this.page.waitForFunction(() => {
+      return window.hasOwnProperty('__astro') && 
+             document.querySelector('[data-testid="message-form"]') !== null;
+    }, { timeout: 20000 });
+    
+    console.log('Hydration check complete');
+    await this.page.screenshot({ path: 'debug-after-hydration.png' });
     
     try {
       await this.messageForm.waitFor({ state: 'visible', timeout: 15000 });
     } catch (error) {
       console.log('Page content:', await this.page.content());
+      console.log('Is form present:', await this.page.isVisible('[data-testid="message-form"]'));
+      console.log('DOM state:', await this.page.evaluate(() => document.documentElement.innerHTML));
       await this.page.screenshot({ path: 'debug-form-timeout.png' });
       throw error;
     }
