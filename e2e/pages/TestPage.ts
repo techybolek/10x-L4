@@ -16,8 +16,21 @@ export class TestPage {
   }
 
   async goto() {
-    await this.page.goto('/test-page');
-    await this.messageForm.waitFor({ state: 'visible' });
+    console.log('Navigating to /test-page');
+    const response = await this.page.goto('/test-page');
+    console.log('Navigation status:', response?.status());
+    console.log('Current URL:', this.page.url());
+    
+    // Take a screenshot before waiting for the form
+    await this.page.screenshot({ path: 'debug-before-form-wait.png' });
+    
+    try {
+      await this.messageForm.waitFor({ state: 'visible', timeout: 15000 });
+    } catch (error) {
+      console.log('Page content:', await this.page.content());
+      await this.page.screenshot({ path: 'debug-form-timeout.png' });
+      throw error;
+    }
   }
 
   async fillMessageForm(message: string) {

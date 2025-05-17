@@ -81,8 +81,10 @@ jobs:
         run: npm run build
         
       - name: Start application
-        run: npm run dev &
-        
+        run: |
+          # Start the app with debug logging
+          DEBUG=* npm run dev &
+          
       - name: Wait for app to be ready
         run: |
           echo "Waiting for app to be ready..."
@@ -95,6 +97,8 @@ jobs:
               ps aux | grep node
               echo "Checking port 3000:"
               netstat -tulpn | grep 3000
+              echo "Checking logs:"
+              tail -n 50 npm-debug.log* 2>/dev/null || true
               exit 1
             fi
             echo "Waiting... ($timeout seconds remaining)"
@@ -102,15 +106,24 @@ jobs:
             timeout=$((timeout - 2))
           done
           echo "Application is ready!"
+          # Test the endpoint directly
+          curl -v http://localhost:3000/test-page
         
       - name: Run E2E tests
         run: npm run test:e2e
+        env:
+          DEBUG: pw:api*
         
-      - name: Upload Playwright report
+      - name: Upload debug artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
-          path: playwright-report/
+          name: debug-artifacts
+          path: |
+            debug-*.png
+            test-results/
+            playwright-report/
+            npm-debug.log*
 
   status-comment:
     needs: [unit-test, e2e-test]
