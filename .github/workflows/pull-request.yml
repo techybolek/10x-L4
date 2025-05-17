@@ -38,37 +38,50 @@ jobs:
         
       - name: Start application
         run: |
-          # Start the app with debug logging
-          DEBUG=* npm run dev &
+          # Start the app and tee output to both terminal and file
+          DEBUG=* ASTRO_LOG_LEVEL=debug npm run dev 2>&1 | tee server-output.log &
+          echo $! > server.pid
           
       - name: Wait for app to be ready
         run: |
           echo "Waiting for app to be ready..."
-          # Increase timeout to 60 seconds
           timeout=60
-          while ! curl -s http://localhost:3000 > /dev/null; do
+          while ! curl -v http://localhost:3000 2>&1; do
             if [ $timeout -le 0 ]; then
-              echo "Timeout waiting for app to start"
-              echo "Checking running processes:"
+              echo "=== Server failed to start ==="
+              echo "=== Last 50 lines of server output ==="
+              tail -n 50 server-output.log
+              echo "=== Process Status ==="
               ps aux | grep node
-              echo "Checking port 3000:"
-              netstat -tulpn | grep 3000
-              echo "Checking logs:"
-              tail -n 50 npm-debug.log* 2>/dev/null || true
+              echo "=== Port Status ==="
+              netstat -tulpn | grep 3000 || true
               exit 1
             fi
             echo "Waiting... ($timeout seconds remaining)"
             sleep 2
             timeout=$((timeout - 2))
           done
-          echo "Application is ready!"
-          # Test the endpoint directly
-          curl -v http://localhost:3000/test-page
+          
+          echo "=== Testing test-page endpoint ==="
+          curl -v http://localhost:3000/test-page 2>&1 | tee test-page-response.log
+          
+          echo "=== Recent server output ==="
+          tail -n 50 server-output.log
         
       - name: Run E2E tests
         run: npm run test:e2e
         env:
           DEBUG: pw:api*
+        
+      - name: Capture diagnostics on failure
+        if: failure()
+        run: |
+          echo "=== Server Output at Failure ==="
+          cat server-output.log
+          echo "=== Process Status ==="
+          ps aux | grep node
+          echo "=== Test Page Response ==="
+          cat test-page-response.log
         
       - name: Upload debug artifacts
         if: always()
@@ -79,6 +92,8 @@ jobs:
             debug-*.png
             test-results/
             playwright-report/
+            server-output.log
+            test-page-response.log
             npm-debug.log*
 
   status-comment:
