@@ -17,6 +17,8 @@ jobs:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       NODE_ENV: test
@@ -24,6 +26,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - name: Debug Environment Variables
+        run: |
+          echo "=== Environment Variable Status ==="
+          echo "SUPABASE_URL is set: $([[ -n "$SUPABASE_URL" ]] && echo 'yes' || echo 'no')"
+          echo "SUPABASE_ANON_KEY is set: $([[ -n "$SUPABASE_ANON_KEY" ]] && echo 'yes' || echo 'no')"
+          echo "OPENROUTER_API_KEY is set: $([[ -n "$OPENROUTER_API_KEY" ]] && echo 'yes' || echo 'no')"
+          echo "TEST_USER_EMAIL is set: $([[ -n "$TEST_USER_EMAIL" ]] && echo 'yes' || echo 'no')"
+          echo "TEST_USER_PASSWORD is set: $([[ -n "$TEST_USER_PASSWORD" ]] && echo 'yes' || echo 'no')"
+          echo "NODE_ENV is: $NODE_ENV"
+          
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -40,31 +52,55 @@ jobs:
         run: npm run build
         
       - name: Start application
-        run: npm run dev &
+        run: |
+          echo "Starting application with environment variables..."
+          env | sort
+          DEBUG=* ASTRO_LOG_LEVEL=debug npm run dev 2>&1 | tee server-output.log &
+          echo $! > server.pid
           
       - name: Wait for app to be ready
         run: |
+          echo "Waiting for app to be ready..."
           timeout=60
-          while ! curl -s http://localhost:3000 > /dev/null; do
+          while ! curl -v http://localhost:3000 2>&1; do
             if [ $timeout -le 0 ]; then
-              echo "Timeout waiting for app to start"
+              echo "=== Server failed to start ==="
+              echo "=== Last 50 lines of server output ==="
+              tail -n 50 server-output.log
+              echo "=== Process Status ==="
+              ps aux | grep node
+              echo "=== Port Status ==="
+              netstat -tulpn | grep 3000 || true
               exit 1
             fi
+            echo "Waiting... ($timeout seconds remaining)"
             sleep 2
             timeout=$((timeout - 2))
           done
           
+          echo "=== Testing test-page endpoint ==="
+          curl -v http://localhost:3000/test-page 2>&1 | tee test-page-response.log
+          
+          echo "=== Recent server output ==="
+          tail -n 50 server-output.log
+          
       - name: Run E2E tests
         run: npm run test:e2e
-        
-      - name: Upload test results
+        env:
+          DEBUG: pw:api*
+          
+      - name: Upload debug artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: debug-artifacts
           path: |
+            debug-*.png
             test-results/
             playwright-report/
+            server-output.log
+            test-page-response.log
+            npm-debug.log*
 
   status-comment:
     needs: [e2e-test]
