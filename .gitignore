@@ -31,3 +31,6 @@ playwright-report/*
 test-results/*
 *.png
 .env*
+
+# Local Netlify folder
+.netlify
