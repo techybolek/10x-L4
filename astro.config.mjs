@@ -15,17 +15,26 @@ export default defineConfig({
   }),
   vite: {
     ssr: {
-      noExternal: ['react-dom'],
+      noExternal: ['react', 'react-dom', '@astrojs/react', 'scheduler'],
       external: ['node:buffer', 'node:stream', 'node:util', 'node:events']
     },
-
     resolve: {
       alias: {
-        'react-dom/server': 'react-dom/server.browser'
+        'react-dom/server': 'react-dom/server.browser',
+        'react-dom': 'react-dom/profiling',
+        'scheduler/tracing': 'scheduler/tracing-profiling'
       }
     },
     build: {
-      minify: false // This helps with debugging if needed
+      minify: false,
+      rollupOptions: {
+        output: {
+          inlineDynamicImports: true
+        }
+      }
+    },
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'scheduler']
     }
   }
 });
