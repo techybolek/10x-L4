@@ -11,8 +11,11 @@ export default defineConfig({
   output: "server",
   integrations: [react(), sitemap(), tailwind()],
   adapter: cloudflare({
-    mode: "directory",
-    functionPerRoute: true,
     imageService: "cloudflare"
-  })
+  }),
+  vite: {
+    ssr: {
+      external: ['node:buffer', 'node:stream', 'node:util', 'node:events']
+    }
+  }
 });
