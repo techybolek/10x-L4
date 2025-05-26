@@ -23,6 +23,7 @@
     "test:openrouter": "vite-node src/scripts/test-openrouter.ts"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.5.3",
     "@astrojs/node": "^9.2.2",
     "@astrojs/react": "4.2.7",
     "@astrojs/sitemap": "3.4.0",
