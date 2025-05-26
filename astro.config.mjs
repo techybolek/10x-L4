@@ -18,6 +18,7 @@ export default defineConfig({
       noExternal: ['react-dom'],
       external: ['node:buffer', 'node:stream', 'node:util', 'node:events']
     },
+
     resolve: {
       alias: {
         'react-dom/server': 'react-dom/server.browser'
