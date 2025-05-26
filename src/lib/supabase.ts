@@ -1,22 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import type { AstroCookies } from 'astro';
-
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseKey = import.meta.env.SUPABASE_KEY;
-
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error('Missing Supabase environment variables');
-}
+import { SUPABASE_URL, SUPABASE_KEY } from 'astro:env/server';
 
 // Create a standard supabase client for non-auth operations
-export const supabase = createClient(supabaseUrl, supabaseKey);
+export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // Create a server client for auth operations with cookie support
 export function createServerSupabaseClient(cookies: AstroCookies) {
   return createServerClient(
-    supabaseUrl,
-    supabaseKey,
+    SUPABASE_URL,
+    SUPABASE_KEY,
     {
       cookies: {
         get(key: string) {
@@ -31,4 +25,4 @@ export function createServerSupabaseClient(cookies: AstroCookies) {
       },
     }
   );
-} 
+}
