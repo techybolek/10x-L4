@@ -9,28 +9,9 @@ import cloudflare from "@astrojs/cloudflare";
 // https://astro.build/config
 export default defineConfig({
   output: "server",
-  integrations: [
-    react({
-      include: ['**/react/**'],
-      experimentalReactChildren: true
-    }), 
-    sitemap(), 
-    tailwind()
-  ],
-  adapter: cloudflare({
-    imageService: "passthrough"
-  }),
+  integrations: [react(), sitemap(), tailwind()],
+  adapter: cloudflare(),
   vite: {
-    ssr: {
-      noExternal: ['react', 'react-dom', '@astrojs/react'],
-      target: 'webworker',
-      external: ['node:buffer', 'node:stream', 'node:util', 'node:events']
-    },
-    resolve: {
-      alias: {
-        'react-dom/server': 'react-dom/server.browser'
-      }
-    },
     build: {
       minify: false
     }
