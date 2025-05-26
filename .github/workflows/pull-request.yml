@@ -7,9 +7,9 @@ permissions:
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ master ]
   pull_request:
-    branches: [ master, develop ]
+    branches: [ master ]
     types: [opened, synchronize, reopened]
 
 jobs:
