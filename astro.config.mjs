@@ -12,8 +12,17 @@ export default defineConfig({
   integrations: [react(), sitemap(), tailwind()],
   adapter: cloudflare(),
   vite: {
+    resolve: {
+      alias: {
+        // Ensure that for server-side rendering in edge environments,
+        // the edge-compatible version of react-dom/server is used.
+        'react-dom/server': 'react-dom/server.edge',
+        // You might also want to explicitly alias the .browser version if it's somehow still being picked up
+        'react-dom/server.browser': 'react-dom/server.edge',
+      }
+    },
     build: {
-      minify: false
+      minify: false // Good for debugging, consider setting to true or removing for production builds for smaller bundle sizes
     }
   }
 });
