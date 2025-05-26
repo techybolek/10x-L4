@@ -9,6 +9,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Specify which environment to use
+    environment: production  # or 'test' depending on your needs
     permissions:
       contents: read
       deployments: write
@@ -22,20 +24,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Debug Cloudflare Credentials
+      - name: Debug Environment and Credentials
         run: |
+          echo "Current GitHub Environment: ${{ github.event.deployment.environment || 'production' }}"
           echo "Checking Cloudflare credentials..."
           if [ -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" ]; then
             echo "✓ CLOUDFLARE_API_TOKEN is set"
             echo "Token length: ${#CLOUDFLARE_API_TOKEN}"
           else
             echo "✗ CLOUDFLARE_API_TOKEN is not set"
+            echo "Make sure the secret is set in the GitHub Environment: ${{ github.event.deployment.environment || 'production' }}"
           fi
           if [ -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]; then
             echo "✓ CLOUDFLARE_ACCOUNT_ID is set"
             echo "Account ID length: ${#CLOUDFLARE_ACCOUNT_ID}"
           else
             echo "✗ CLOUDFLARE_ACCOUNT_ID is not set"
+            echo "Make sure the secret is set in the GitHub Environment: ${{ github.event.deployment.environment || 'production' }}"
           fi
           echo "Project name: l4"
 
@@ -64,6 +69,7 @@ jobs:
           echo "Verifying Cloudflare configuration..."
           echo "Using project name: l4"
           echo "Using directory: dist"
+          echo "Using environment: ${{ github.event.deployment.environment || 'production' }}"
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1
