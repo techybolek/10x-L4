@@ -15,7 +15,16 @@ export default defineConfig({
   }),
   vite: {
     ssr: {
+      noExternal: ['react-dom'],
       external: ['node:buffer', 'node:stream', 'node:util', 'node:events']
+    },
+    resolve: {
+      alias: {
+        'react-dom/server': 'react-dom/server.browser'
+      }
+    },
+    build: {
+      minify: false // This helps with debugging if needed
     }
   }
 });
