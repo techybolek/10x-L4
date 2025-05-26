@@ -15,11 +15,29 @@ jobs:
     env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       NODE_VERSION: "20"
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Debug Cloudflare Credentials
+        run: |
+          echo "Checking Cloudflare credentials..."
+          if [ -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" ]; then
+            echo "✓ CLOUDFLARE_API_TOKEN is set"
+            echo "Token length: ${#CLOUDFLARE_API_TOKEN}"
+          else
+            echo "✗ CLOUDFLARE_API_TOKEN is not set"
+          fi
+          if [ -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]; then
+            echo "✓ CLOUDFLARE_ACCOUNT_ID is set"
+            echo "Account ID length: ${#CLOUDFLARE_ACCOUNT_ID}"
+          else
+            echo "✗ CLOUDFLARE_ACCOUNT_ID is not set"
+          fi
+          echo "Project name: l4"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -32,18 +50,28 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+
+      - name: Debug Pre-Deploy
+        run: |
+          echo "Checking deployment configuration..."
+          echo "Directory contents:"
+          ls -la dist
+          echo "Verifying Cloudflare configuration..."
+          echo "Using project name: l4"
+          echo "Using directory: dist"
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+          projectName: l4
           directory: dist
-          # Optional: Enable this if you want to have GitHub Deployments triggered
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          # Optional: Switch what branch you are publishing to.
-          # By default this will be the branch which triggered this workflow
           branch: ${{ github.head_ref || github.ref_name }}
-          # Enable Wrangler v3
           wranglerVersion: '3' 
