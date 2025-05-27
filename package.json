@@ -4,7 +4,8 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "cross-env DEPLOYMENT_ENV=cloudflare astro build",
+    "build:local": "cross-env DEPLOYMENT_ENV=node astro build",
     "preview": "astro preview",
     "astro": "astro",
     "lint": "eslint .",
@@ -68,6 +69,7 @@
     "@vitest/ui": "^3.1.4",
     "astro-eslint-parser": "^1.2.2",
     "chai": "^5.2.0",
+    "cross-env": "^7.0.3",
     "eslint": "^9.27.0",
     "eslint-config-prettier": "10.1.5",
     "eslint-import-resolver-typescript": "4.3.5",

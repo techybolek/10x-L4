@@ -5,12 +5,17 @@ import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
 import cloudflare from "@astrojs/cloudflare";
+import node from "@astrojs/node";
 
 // https://astro.build/config
 export default defineConfig({
   output: "server",
   integrations: [react(), sitemap(), tailwind()],
-  adapter: cloudflare(),
+  adapter: process.env.DEPLOYMENT_ENV === 'cloudflare' 
+    ? cloudflare()
+    : node({
+        mode: "standalone",
+      }),
   env: {
     schema: {
       SUPABASE_URL: envField.string({ 
