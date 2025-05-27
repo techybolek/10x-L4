@@ -10,11 +10,15 @@ import node from "@astrojs/node";
 // https://astro.build/config
 export default defineConfig({
   output: "server",
+  server: {
+    port: 3000
+  },
   integrations: [react(), sitemap(), tailwind()],
   adapter: process.env.DEPLOYMENT_ENV === 'cloudflare' 
     ? cloudflare()
     : node({
         mode: "standalone",
+        port: 3000
       }),
   env: {
     schema: {
@@ -24,16 +28,18 @@ export default defineConfig({
       }),
       SUPABASE_KEY: envField.string({ 
         context: "server", 
-        access: "secret" 
+        access: process.env.DEPLOYMENT_ENV === 'cloudflare' ? "secret" : "public"
       }),
     }
   },
   vite: {
     resolve: {
-      alias: {
-        'react-dom/server': 'react-dom/server.edge',
-        'react-dom/server.browser': 'react-dom/server.edge',
-      }
+      alias: process.env.DEPLOYMENT_ENV === 'cloudflare' 
+        ? {
+            'react-dom/server': 'react-dom/server.edge',
+            'react-dom/server.browser': 'react-dom/server.edge',
+          }
+        : {}
     },
     build: {
       minify: false
