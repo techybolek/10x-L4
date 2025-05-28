@@ -2,7 +2,6 @@ import type { APIRoute } from 'astro';
 import { z } from 'zod';
 import type { GenerateFlashcardsCommand, GenerationResultDTO } from '../../../types';
 import { createServerSupabaseClient } from '@/lib/supabase';
-import { createHash } from 'crypto';
 import { OpenRouterService } from '../../../lib/openrouter';
 
 export const prerender = false;
@@ -161,8 +160,12 @@ const generateFlashcards = async (text: string) => {
 };
 
 // Function to calculate text hash
-const calculateTextHash = (text: string): string => {
-  return createHash('sha256').update(text).digest('hex');
+const calculateTextHash = async (text: string): Promise<string> => {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(text);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 };
 
 export const POST: APIRoute = async ({ request, locals, cookies }) => {
@@ -203,7 +206,7 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
 
   try {
     // Calculate text hash for deduplication
-    const sourceTextHash = calculateTextHash(parseResult.data.text); // Use validated and trimmed text
+    const sourceTextHash = await calculateTextHash(parseResult.data.text);
     
     // Generate flashcards using AI
     const aiResponse = await generateFlashcards(parseResult.data.text);
@@ -259,7 +262,7 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
         .insert({
           user_id: locals.user.id,
           model: 'deepseek-reasoner',
-          source_text_hash: calculateTextHash(parseResult.data.text),
+          source_text_hash: await calculateTextHash(parseResult.data.text),
           source_text_length: parseResult.data.text.length,
           error_code: 'GENERATION_ERROR',
           error_message: error instanceof Error ? error.message : String(error)
