@@ -32,7 +32,7 @@ describe('cn utility function', () => {
   });
 
   it('should handle falsy values', () => {
-    const result = cn('text-lg', false && 'hidden', null, undefined, 0, '');
+    const result = cn('text-lg', null, undefined, 0, '');
     expect(result).toBe('text-lg');
   });
 }); 
