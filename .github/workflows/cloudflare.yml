@@ -57,7 +57,7 @@ jobs:
             echo "✗ CLOUDFLARE_ACCOUNT_ID is not set"
             echo "Make sure the secret is set in the GitHub Environment: ${{ github.event.deployment.environment || 'production' }}"
           fi
-          echo "Project name: l4"
+          echo "Project name: 10x-l4"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -81,7 +81,7 @@ jobs:
           echo "Directory contents:"
           ls -la dist
           echo "Verifying Cloudflare configuration..."
-          echo "Using project name: l4"
+          echo "Using project name: 10x-l4"
           echo "Using directory: dist"
           echo "Using environment: ${{ github.event.deployment.environment || 'production' }}"
 
@@ -90,7 +90,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: l4
+          projectName: 10x-l4
           directory: dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.head_ref || github.ref_name }}
