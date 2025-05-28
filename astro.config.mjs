@@ -30,6 +30,10 @@ export default defineConfig({
         context: "server", 
         access: process.env.DEPLOYMENT_ENV === 'cloudflare' ? "secret" : "public"
       }),
+      OPENROUTER_API_KEY: envField.string({ 
+        context: "server", 
+        access: process.env.DEPLOYMENT_ENV === 'cloudflare' ? "secret" : "public"
+      }),
     }
   },
   vite: {

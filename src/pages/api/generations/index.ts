@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { GenerateFlashcardsCommand, GenerationResultDTO } from '../../../types';
 import { createServerSupabaseClient } from '@/lib/supabase';
 import { OpenRouterService } from '../../../lib/openrouter';
+import { OPENROUTER_API_KEY } from 'astro:env/server';
 
 export const prerender = false;
 
@@ -15,7 +16,7 @@ const commandSchema = z.object({
 
 // Initialize OpenRouter service
 const openRouterService = new OpenRouterService({
-  apiKey: import.meta.env.OPENROUTER_API_KEY || '',
+  apiKey: OPENROUTER_API_KEY,
   defaultModel: 'gpt-4o-mini',
   maxRetries: 3,
   timeout: 60000,
