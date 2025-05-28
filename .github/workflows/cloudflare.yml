@@ -49,6 +49,7 @@ jobs:
           else
             echo "✗ CLOUDFLARE_API_TOKEN is not set"
             echo "Make sure the secret is set in the GitHub Environment: ${{ github.event.deployment.environment || 'production' }}"
+            exit 1
           fi
           if [ -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]; then
             echo "✓ CLOUDFLARE_ACCOUNT_ID is set"
@@ -56,6 +57,22 @@ jobs:
           else
             echo "✗ CLOUDFLARE_ACCOUNT_ID is not set"
             echo "Make sure the secret is set in the GitHub Environment: ${{ github.event.deployment.environment || 'production' }}"
+            exit 1
+          fi
+          echo "Checking Supabase credentials..."
+          if [ -n "${{ secrets.SUPABASE_URL }}" ]; then
+            echo "✓ SUPABASE_URL is set"
+          else
+            echo "✗ SUPABASE_URL is not set"
+            echo "Make sure the secret is set in the GitHub Environment: ${{ github.event.deployment.environment || 'production' }}"
+            exit 1
+          fi
+          if [ -n "${{ secrets.SUPABASE_KEY }}" ]; then
+            echo "✓ SUPABASE_KEY is set"
+          else
+            echo "✗ SUPABASE_KEY is not set"
+            echo "Make sure the secret is set in the GitHub Environment: ${{ github.event.deployment.environment || 'production' }}"
+            exit 1
           fi
           echo "Project name: 10x-l4"
 
@@ -69,7 +86,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build:local
+        run: npm run build
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
