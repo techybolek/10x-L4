@@ -44,6 +44,7 @@ export type Database = {
           source: string
           updated_at: string
           user_id: string
+          display_order: number
         }
         Insert: {
           back: string
@@ -54,6 +55,7 @@ export type Database = {
           source: string
           updated_at?: string
           user_id: string
+          display_order: number
         }
         Update: {
           back?: string
@@ -64,6 +66,7 @@ export type Database = {
           source?: string
           updated_at?: string
           user_id?: string
+          display_order?: number
         }
         Relationships: [
           {

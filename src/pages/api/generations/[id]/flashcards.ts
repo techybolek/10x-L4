@@ -33,9 +33,9 @@ export const GET: APIRoute = async ({ params, locals, cookies }) => {
     // Get the flashcards
     const { data: flashcards, error: flashcardsError } = await supabase
       .from('flashcards')
-      .select('id, front, back')
+      .select('id, front, back, display_order')
       .eq('generation_id', id)
-      .order('created_at', { ascending: true });
+      .order('display_order', { ascending: true });
 
     if (flashcardsError) {
       return new Response(JSON.stringify({ error: 'Failed to load flashcards' }), {

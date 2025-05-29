@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { GenerateFlashcardsCommand, GenerationResultDTO } from '../../../types';
 import { createServerSupabaseClient } from '@/lib/supabase';
 import { OpenRouterService } from '../../../lib/openrouter';
+//@ts-expect-error OPENROUTER_API_KEY is definned in env.d
 import { OPENROUTER_API_KEY } from 'astro:env/server';
 
 export const prerender = false;
@@ -61,10 +62,11 @@ const generateFlashcardsFromText = async (text: string) => {
       
       // Ensure it's an array
       if (Array.isArray(parsedContent)) {
-        flashcardProposals = parsedContent.map((card: { front?: string; back?: string }) => ({
+        flashcardProposals = parsedContent.map((card: { front?: string; back?: string }, index: number) => ({
           front: card.front || '',
           back: card.back || '',
-          source: 'ai-full' as const
+          source: 'ai-full' as const,
+          display_order: index + 1
         }));
       } else {
         throw new Error('Response is not an array');
@@ -77,10 +79,11 @@ const generateFlashcardsFromText = async (text: string) => {
       if (jsonMatch) {
         try {
           const parsedContent = JSON.parse(jsonMatch[0]);
-          flashcardProposals = parsedContent.map((card: { front?: string; back?: string }) => ({
+          flashcardProposals = parsedContent.map((card: { front?: string; back?: string }, index: number) => ({
             front: card.front || '',
             back: card.back || '',
-            source: 'ai-full' as const
+            source: 'ai-full' as const,
+            display_order: index + 1
           }));
         } catch (e) {
           throw new Error('Failed to parse JSON from API response');
@@ -272,7 +275,7 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
       console.error('Error logging generation error:', logError);
     }
     
-    return new Response(JSON.stringify({ error: 'Wystąpił błąd podczas generowania fiszek' }), {
+    return new Response(JSON.stringify({ error: 'An error occurred while generating flashcards' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     });

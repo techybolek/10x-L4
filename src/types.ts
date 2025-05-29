@@ -27,6 +27,7 @@ export type FlashcardDTO = {
   created_at: string;
   updated_at: string;
   generation_id?: number | null; // Optional field for AI generated flashcards
+  display_order: number;
 };
 
 // Command model for creating a flashcard. Used in both single and bulk flashcard creation.
@@ -63,6 +64,7 @@ export type FlashcardProposalDTO = {
   front: string;
   back: string;
   source: 'ai-full';
+  display_order: number;
 };
 
 // Statistics provided after flashcard generation.
