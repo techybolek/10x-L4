@@ -2,9 +2,9 @@ name: Deploy to Cloudflare Pages
 
 on:
   push:
-    branches: [cloudflare]
+    branches: [cloudflare_xxx]
   pull_request:
-    branches: [cloudflare]
+    branches: [cloudflare_xxx]
 
 jobs:
   lint:

@@ -22,6 +22,10 @@ export default defineConfig({
       }),
   env: {
     schema: {
+      SITE_URL: envField.string({ 
+        context: "server", 
+        access: "public" 
+      }),
       SUPABASE_URL: envField.string({ 
         context: "server", 
         access: "public" 
