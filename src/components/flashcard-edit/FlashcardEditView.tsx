@@ -24,6 +24,8 @@ export default function FlashcardEditView({ generationId }: FlashcardEditViewPro
     isLoading,
     error,
     handleEdit,
+    handleDelete,
+    isDeletingMap,
   } = useFlashcardEdit(generationId);
 
   // Function to add a notification
@@ -40,6 +42,17 @@ export default function FlashcardEditView({ generationId }: FlashcardEditViewPro
   // Function to dismiss a notification
   const dismissNotification = (id: string) => {
     setNotifications(prev => prev.filter(notification => notification.id !== id));
+  };
+
+  // Handle flashcard deletion with notifications
+  const handleFlashcardDelete = async (id: string) => {
+    try {
+      await handleDelete(id);
+      addNotification('success', 'Flashcard deleted successfully');
+    } catch (err) {
+      addNotification('error', err instanceof Error ? err.message : 'Failed to delete flashcard');
+      throw err;
+    }
   };
 
   if (isLoading) {
@@ -64,6 +77,8 @@ export default function FlashcardEditView({ generationId }: FlashcardEditViewPro
         <FlashcardList 
           flashcards={flashcards}
           onEdit={handleEdit}
+          onDelete={handleFlashcardDelete}
+          isDeletingMap={isDeletingMap}
         />
       )}
       

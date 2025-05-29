@@ -10,6 +10,7 @@ export function useFlashcardEdit(generationId: string) {
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDeletingMap, setIsDeletingMap] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     loadFlashcards();
@@ -60,6 +61,28 @@ export function useFlashcardEdit(generationId: string) {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    try {
+      setIsDeletingMap(prev => ({ ...prev, [id]: true }));
+
+      const response = await fetch(`/api/flashcards/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to delete flashcard');
+      }
+
+      setFlashcards(cards => cards.filter(card => card.id !== id));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete flashcard');
+      throw err;
+    } finally {
+      setIsDeletingMap(prev => ({ ...prev, [id]: false }));
+    }
+  };
+
   const handleSave = async () => {
     try {
       // We don't need to do anything here since changes are saved immediately
@@ -76,6 +99,8 @@ export function useFlashcardEdit(generationId: string) {
     isLoading,
     error,
     handleEdit,
+    handleDelete,
     handleSave,
+    isDeletingMap,
   };
 } 
