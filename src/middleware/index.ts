@@ -6,6 +6,8 @@ const PUBLIC_ROUTES = [
   '/auth/login',
   '/auth/register',
   '/auth/callback',
+  '/auth/recover',
+  '/auth/reset-password',
   '/',
   '/about',
   '/test-page'
@@ -16,6 +18,7 @@ const PUBLIC_API_ROUTES = [
   '/api/auth/login',
   '/api/auth/register',
   '/api/auth/recover',
+  '/api/auth/reset-password',
   '/api/auth/logout'
 ];
 

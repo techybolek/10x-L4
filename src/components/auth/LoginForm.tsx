@@ -27,6 +27,11 @@ export function LoginForm() {
     }
   };
 
+  const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
+    e.preventDefault();
+    window.location.href = path;
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-2">
@@ -68,10 +73,18 @@ export function LoginForm() {
       </div>
 
       <div className="flex items-center justify-between">
-        <a href="/auth/recover" className="text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400">
+        <a 
+          href="/auth/recover" 
+          onClick={(e) => handleNavigation(e, '/auth/recover')}
+          className="text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400"
+        >
           Forgot your password?
         </a>
-        <a href="/auth/register" className="text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400">
+        <a 
+          href="/auth/register" 
+          onClick={(e) => handleNavigation(e, '/auth/register')}
+          className="text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400"
+        >
           Don't have an account?
         </a>
       </div>

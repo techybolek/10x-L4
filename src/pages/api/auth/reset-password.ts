@@ -2,50 +2,56 @@ import type { APIRoute } from 'astro';
 import { createServerSupabaseClient } from '@/lib/supabase';
 import { z } from 'zod';
 
-const recoverSchema = z.object({
-  email: z.string().email('Invalid email format'),
+const resetPasswordSchema = z.object({
+  password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
 export const POST: APIRoute = async ({ request, cookies }) => {
   try {
     const body = await request.json();
-    const { email } = recoverSchema.parse(body);
-
-    console.log('Password recovery requested for:', email);
+    const { password } = resetPasswordSchema.parse(body);
 
     // Create server client with cookie support
     const supabase = createServerSupabaseClient(cookies);
 
-    // Get the site URL for the redirect
-    const siteUrl = import.meta.env.SITE_URL || new URL(request.url).origin;
-   
-    console.log('siteUrl', siteUrl);
-    // Call Supabase to send the password reset email
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${siteUrl}/auth/reset-password`,
-    });
+    // Get the session to ensure user is authenticated for password reset
+    const { data: { session } } = await supabase.auth.getSession();
 
-    if (error) {
-      console.error('Supabase password reset error:', error);
+    if (!session) {
       return new Response(
         JSON.stringify({ 
           status: 'error',
-          error: 'Failed to send reset instructions. Please try again.',
+          error: 'No active session found. Please try the reset link again.',
+        }), 
+        { status: 401 }
+      );
+    }
+
+    // Update the password
+    const { error } = await supabase.auth.updateUser({
+      password: password
+    });
+
+    if (error) {
+      console.error('Password reset error:', error);
+      return new Response(
+        JSON.stringify({ 
+          status: 'error',
+          error: 'Failed to reset password. Please try again.',
         }), 
         { status: 400 }
       );
     }
 
-    // Always return success to prevent email enumeration
     return new Response(
       JSON.stringify({ 
         status: 'success',
-        message: 'If an account exists with that email, password reset instructions have been sent.',
+        message: 'Password has been reset successfully.',
       }), 
       { status: 200 }
     );
   } catch (err) {
-    console.error('Password recovery error:', err);
+    console.error('Password reset error:', err);
     
     if (err instanceof z.ZodError) {
       return new Response(
