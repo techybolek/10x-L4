@@ -2,12 +2,14 @@
 import Layout from '@/layouts/Layout.astro';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { Toaster } from '@/components/ui/toaster';
+
+const title = "Flashcard Wizard";
 ---
 
-<Layout title="Create Account - 10x Cards" isAuthPage>
+<Layout title={`Create Account - ${title}`} isAuthPage>
   <Fragment slot="title">Create your account</Fragment>
   <Fragment slot="description">
-    Join 10x Cards to supercharge your learning!
+    Join {title} to supercharge your learning!
   </Fragment>
   
   <RegisterForm client:load />

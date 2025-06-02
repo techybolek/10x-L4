@@ -2,10 +2,12 @@
 import Layout from '@/layouts/Layout.astro';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { Toaster } from '@/components/ui/toaster';
+
+const title = "Flashcard Wizard";
 ---
 
-<Layout title="Sign in - 10x Cards" isAuthPage>
-  <Fragment slot="title">Sign in to 10x Cards</Fragment>
+<Layout title={`Sign in - ${title}`} isAuthPage>
+  <Fragment slot="title">Sign in to {title}</Fragment>
   <Fragment slot="description">
     Welcome back! Please sign in to continue.
   </Fragment>

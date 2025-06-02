@@ -295,10 +295,15 @@ export const GET: APIRoute = async ({ locals, cookies }) => {
       });
     }
 
-    // Get all generations for the current user
+    // Get all generations for the current user with a count of their flashcards
     const { data: generations, error: generationsError } = await supabase
       .from('generations')
-      .select('id, created_at, generated_count, generation_name')
+      .select(`
+        id,
+        created_at,
+        generation_name,
+        flashcards:flashcards(count)
+      `)
       .eq('user_id', locals.user.id)
       .order('created_at', { ascending: false });
 
@@ -310,12 +315,15 @@ export const GET: APIRoute = async ({ locals, cookies }) => {
       });
     }
 
-    // Log the raw data from database
-    console.log('API - Raw generations data:', JSON.stringify(generations, null, 2));
-    console.log('API - First generation created_at type:', generations?.[0]?.created_at ? typeof generations[0].created_at : 'no data');
-    console.log('API - First generation created_at value:', generations?.[0]?.created_at);
+    // Transform the data to match the expected format
+    const transformedGenerations = generations?.map(gen => ({
+      id: gen.id,
+      created_at: gen.created_at,
+      generation_name: gen.generation_name,
+      generated_count: gen.flashcards?.[0]?.count || 0
+    }));
 
-    return new Response(JSON.stringify({ generations }), {
+    return new Response(JSON.stringify({ generations: transformedGenerations }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     });

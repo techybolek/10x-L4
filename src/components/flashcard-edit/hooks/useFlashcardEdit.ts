@@ -4,6 +4,7 @@ interface Flashcard {
   id: string;
   front: string;
   back: string;
+  display_order: number;
 }
 
 export function useFlashcardEdit(generationId: string) {
@@ -11,6 +12,7 @@ export function useFlashcardEdit(generationId: string) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDeletingMap, setIsDeletingMap] = useState<Record<string, boolean>>({});
+  const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
     loadFlashcards();
@@ -32,6 +34,48 @@ export function useFlashcardEdit(generationId: string) {
       setError(err instanceof Error ? err.message : 'Failed to load flashcards');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleCreate = async (front: string, back: string) => {
+    try {
+      setIsCreating(true);
+      setError(null);
+
+      // Calculate the next display order
+      const nextDisplayOrder = flashcards.length > 0 
+        ? Math.max(...flashcards.map(f => f.display_order)) + 1 
+        : 1;
+
+      const response = await fetch('/api/flashcards', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          front,
+          back,
+          generation_id: parseInt(generationId),
+          source: 'manual',
+          display_order: nextDisplayOrder,
+          user_id: null // This will be set by the server
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create flashcard');
+      }
+
+      const newFlashcard = await response.json();
+      setFlashcards(cards => [...cards, newFlashcard.data]);
+
+      return newFlashcard.data;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create flashcard');
+      throw err;
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -100,7 +144,9 @@ export function useFlashcardEdit(generationId: string) {
     error,
     handleEdit,
     handleDelete,
+    handleCreate,
     handleSave,
     isDeletingMap,
+    isCreating,
   };
 } 

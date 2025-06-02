@@ -4,6 +4,7 @@ interface Flashcard {
   id: string;
   front: string;
   back: string;
+  display_order: number;
 }
 
 interface FlashcardListProps {

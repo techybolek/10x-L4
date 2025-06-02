@@ -14,6 +14,8 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
       });
     }
 
+    const userId = locals.user.id;
+
     const body = await request.json();
 
     if (!Array.isArray(body)) {
@@ -25,41 +27,60 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
 
     // Validate each flashcard in the array
     for (const flashcard of body) {
-      if (!flashcard.front || !flashcard.back) {
-        return new Response(JSON.stringify({ error: "Each flashcard must include a 'front' and a 'back'" }), {
+      if (!flashcard.front || !flashcard.back || !flashcard.generation_id) {
+        return new Response(JSON.stringify({ error: "Each flashcard must include 'front', 'back', and 'generation_id'" }), {
           status: 400,
           headers: { 'Content-Type': 'application/json' }
         });
       }
     }
 
-    // Add user_id to each flashcard
-    body.forEach(flashcard => {
-      // @ts-expect-error - user_id is not typed
-      flashcard.user_id = locals.user.id;
-    });
+    // Get the current max display_order for this generation
+    const { data: existingFlashcards, error: countError } = await supabase
+      .from('flashcards')
+      .select('display_order')
+      .eq('generation_id', body[0].generation_id)
+      .order('display_order', { ascending: false })
+      .limit(1);
+
+    if (countError) {
+      console.error('Error getting max display_order:', countError);
+      return new Response(JSON.stringify({ error: 'Error getting max display_order' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    const startingOrder = existingFlashcards && existingFlashcards.length > 0
+      ? existingFlashcards[0].display_order + 1
+      : 1;
+
+    // Add user_id and display_order to each flashcard
+    const flashcardsToInsert = body.map((flashcard, index) => ({
+      ...flashcard,
+      user_id: userId,
+      display_order: startingOrder + index
+    }));
 
     // Insert bulk flashcards into database
     const response = await supabase
       .from('flashcards')
-      .insert(body);
+      .insert(flashcardsToInsert);
 
     if (response.error) {
-      console.error(response.error);
+      console.error('Insert error:', response.error);
       return new Response(JSON.stringify({ error: 'Error creating flashcards' }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' }
       });
     }
 
-    console.log('response', response);
-
     return new Response(JSON.stringify({ data: null }), {
       status: 201,
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (error) {
-    console.error(error);
+    console.error('Bulk insert error:', error);
     return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }

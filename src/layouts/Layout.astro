@@ -15,13 +15,14 @@ if (!isAuthPage) {
 	const { data: { session } } = await Astro.locals.supabase.auth.getSession();
 	user = session?.user;
 }
+
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="description" content="10x Cards - Supercharge your learning" />
+		<meta name="description" content={`${title} - Supercharge your learning`} />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />

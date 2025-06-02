@@ -55,11 +55,11 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
     }
 
     const body = await request.json();
-    const { front, back, source, generation_id } = body;
+    const { front, back, source, generation_id, display_order } = body;
 
     // Validate required fields
-    if (!front || !back || !source) {
-      return new Response(JSON.stringify({ error: "Fields 'front', 'back', and 'source' are required" }), {
+    if (!front || !back || !source || display_order === undefined) {
+      return new Response(JSON.stringify({ error: "Fields 'front', 'back', 'source', and 'display_order' are required" }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });
@@ -71,7 +71,8 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
       back,
       source,
       user_id: locals.user.id,
-      generation_id: generation_id !== undefined ? Number(generation_id) : null
+      generation_id: generation_id !== undefined ? Number(generation_id) : null,
+      display_order
     };
 
     // Insert into database

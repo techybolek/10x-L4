@@ -1,9 +1,11 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import { RecoverForm } from '@/components/auth/RecoverForm';
+
+const title = "Flashcard Wizard";
 ---
 
-<Layout title="Reset Password - 10x Cards" isAuthPage>
+<Layout title={`Reset Password - ${title}`} isAuthPage>
   <Fragment slot="title">Reset your password</Fragment>
   <Fragment slot="description">
     Enter your email and we'll send you instructions to reset your password.

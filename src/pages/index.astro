@@ -5,13 +5,15 @@ import type { User } from '@supabase/supabase-js';
 
 // Get the authenticated user from locals (set by middleware)
 const user = Astro.locals.user as User | null;
+
+const title = "Flashcard Wizard";
 ---
 
-<Layout title="Welcome to L4 - Your AI Assistant">
+<Layout title={`Welcome to ${title} - Your AI Assistant`}>
   <main class="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
     <div class="container mx-auto px-4 py-16">
       <nav class="flex justify-between items-center mb-16">
-        <div class="text-2xl font-bold text-white">L4</div>
+        <div class="text-2xl font-bold text-white">{title}</div>
         {!user ? (
           <div class="space-x-4">
             <a href="/auth/login" class="text-white hover:text-gray-300">Login</a>
@@ -26,7 +28,7 @@ const user = Astro.locals.user as User | null;
         <h1 class="text-6xl font-bold text-white mb-6 leading-tight">
           Unlock the Power of AI<br/>
           <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
-            with L4
+            with {title}
           </span>
         </h1>
         
