@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import { createServerSupabaseClient } from '@/lib/supabase';
 import { z } from 'zod';
+//@ts-expect-error - the types may not be there but thats ok
+import { SITE_URL } from 'astro:env/server';
 
 const recoverSchema = z.object({
   email: z.string().email('Invalid email format'),
@@ -17,7 +19,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const supabase = createServerSupabaseClient(cookies);
 
     // Get the site URL for the redirect
-    const siteUrl = import.meta.env.SITE_URL || new URL(request.url).origin;
+    const siteUrl = SITE_URL || new URL(request.url).origin;
    
     console.log('siteUrl', siteUrl);
     // Call Supabase to send the password reset email

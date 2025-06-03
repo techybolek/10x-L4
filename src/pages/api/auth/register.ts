@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import { createServerSupabaseClient } from '@/lib/supabase';
 import { z } from 'zod';
+//@ts-expect-error - the types may not be there but thats ok
+import { SITE_URL } from 'astro:env/server';
 
 const registerSchema = z.object({
   email: z.string().email('Invalid email format'),
@@ -21,7 +23,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     // Create server client with cookie support
     const supabase = createServerSupabaseClient(cookies);
 
-    const siteUrl = import.meta.env.SITE_URL;
+    const siteUrl = SITE_URL
     const redirectTo = `${siteUrl}/auth/callback`;
     console.log('Redirect to link:', redirectTo);
 
