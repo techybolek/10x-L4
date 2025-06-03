@@ -6,10 +6,10 @@ const env = loadEnv('', process.cwd(), '');
 
 // Create Supabase client
 const supabaseUrl = env.SUPABASE_URL;
-const supabaseKey = env.SUPABASE_KEY;
+const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY; // Use service role key for admin access
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Missing SUPABASE_URL or SUPABASE_KEY in environment variables.');
+  console.error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in environment variables.');
   process.exit(1);
 }
 
@@ -42,6 +42,23 @@ async function cleanDatabase() {
       process.exit(1);
     }
     console.log('✓ Generations table cleaned');
+
+    // Delete all users using the admin API
+    const { data: users, error: listUsersError } = await supabaseClient.auth.admin.listUsers();
+    
+    if (listUsersError) {
+      console.error('Error listing users:', listUsersError);
+      process.exit(1);
+    }
+
+    for (const user of users.users) {
+      const { error: deleteUserError } = await supabaseClient.auth.admin.deleteUser(user.id);
+      if (deleteUserError) {
+        console.error(`Error deleting user ${user.id}:`, deleteUserError);
+        process.exit(1);
+      }
+    }
+    console.log('✓ Users table cleaned');
 
     console.log('Database cleanup completed successfully!');
     process.exit(0);

@@ -22,12 +22,14 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const supabase = createServerSupabaseClient(cookies);
 
     const siteUrl = import.meta.env.SITE_URL;
+    const redirectTo = `${siteUrl}/auth/callback`;
+    console.log('Redirect to link:', redirectTo);
 
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: `${siteUrl}/auth/callback`,
+        emailRedirectTo: redirectTo,
       },
     });
 
