@@ -22,7 +22,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     console.log('siteUrl', siteUrl);
     // Call Supabase to send the password reset email
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${siteUrl}/auth/reset-password`,
+      redirectTo: `${siteUrl}/auth/callback?type=recovery`,
     });
 
     if (error) {

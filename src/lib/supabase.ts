@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import type { AstroCookies } from 'astro';
+//@ts-expect-error - the types may not be there but thats ok
 import { SUPABASE_URL, SUPABASE_KEY } from 'astro:env/server';
 
 // Create a standard supabase client for non-auth operations

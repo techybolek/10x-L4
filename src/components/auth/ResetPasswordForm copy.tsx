@@ -38,20 +38,6 @@ export function ResetPasswordForm() {
       const result = await response.json();
 
       if (result.status === 'error') {
-        // Handle session expiration specifically
-        if (result.error.includes('No active session found')) {
-          toast({
-            variant: "destructive",
-            title: "Session Expired",
-            description: "Your reset session has expired. Please request a new password reset link.",
-          });
-          // Redirect to password recovery page after a short delay
-          setTimeout(() => {
-            window.location.href = '/auth/recover';
-          }, 3000);
-          return;
-        }
-        
         toast({
           variant: "destructive",
           title: "Error",
