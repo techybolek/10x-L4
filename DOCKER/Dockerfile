@@ -3,9 +3,30 @@
 # Build Stage
 FROM node:20-alpine AS builder
 
-# Build arguments
+# Build arguments with defaults
 ARG NODE_ENV=production
 ARG DEPLOYMENT_ENV=node
+ARG SITE_URL=http://localhost:3000
+ARG SUPABASE_URL
+ARG SUPABASE_KEY
+ARG OPENROUTER_API_KEY
+
+# Validate required build args
+RUN if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ] || [ -z "$OPENROUTER_API_KEY" ]; then \
+    echo "Error: Required build arguments are missing" && \
+    echo "SUPABASE_URL: ${SUPABASE_URL:+set}" && \
+    echo "SUPABASE_KEY: ${SUPABASE_KEY:+set}" && \
+    echo "OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:+set}" && \
+    exit 1; \
+    fi
+
+# Set as environment variables for build
+ENV NODE_ENV=$NODE_ENV \
+    DEPLOYMENT_ENV=$DEPLOYMENT_ENV \
+    SITE_URL=$SITE_URL \
+    SUPABASE_URL=$SUPABASE_URL \
+    SUPABASE_KEY=$SUPABASE_KEY \
+    OPENROUTER_API_KEY=$OPENROUTER_API_KEY
 
 # Set working directory
 WORKDIR /app

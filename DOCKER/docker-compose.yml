@@ -6,14 +6,18 @@ services:
       context: ..
       dockerfile: DOCKER/Dockerfile
       args:
-        NODE_ENV: production
-        DEPLOYMENT_ENV: node
+        NODE_ENV: ${NODE_ENV:-production}
+        DEPLOYMENT_ENV: ${DEPLOYMENT_ENV:-node}
+        SITE_URL: ${SITE_URL:-http://localhost:3000}
+        SUPABASE_URL: ${SUPABASE_URL}
+        SUPABASE_KEY: ${SUPABASE_KEY}
+        OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
-      - DEPLOYMENT_ENV=node
-      - SITE_URL=${SITE_URL}
+      - NODE_ENV=${NODE_ENV:-production}
+      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV:-node}
+      - SITE_URL=${SITE_URL:-http://localhost:3000}
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_KEY=${SUPABASE_KEY}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
