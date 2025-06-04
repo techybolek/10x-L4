@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: DOCKER/Dockerfile
+      args:
+        NODE_ENV: production
+        DEPLOYMENT_ENV: node
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DEPLOYMENT_ENV=node
+      - SITE_URL=${SITE_URL}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped 
