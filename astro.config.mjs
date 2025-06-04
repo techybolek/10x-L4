@@ -11,6 +11,7 @@ import node from "@astrojs/node";
 export default defineConfig({
   output: "server",
   server: {
+    host: '0.0.0.0',
     port: 3000
   },
   integrations: [react(), sitemap(), tailwind()],
@@ -18,6 +19,8 @@ export default defineConfig({
     ? cloudflare()
     : node({
         mode: "standalone",
+        //@ts-ignore not idea whyhe is complaining about this
+        host: '0.0.0.0',
         port: 3000
       }),
   env: {

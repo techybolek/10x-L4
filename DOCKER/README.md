@@ -123,7 +123,7 @@ The build script looks for environment files in the following order:
 
 3. To check build arguments used:
    ```bash
-   docker history techybolek/project-name:latest
+   docker history techybolek/flashcard-wizard:latest
    ```
 
 ## Quick Start

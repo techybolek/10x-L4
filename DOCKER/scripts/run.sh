@@ -4,9 +4,9 @@
 set -e
 
 # Default values
-IMAGE_NAME="techybolek/project-name"
+IMAGE_NAME="techybolek/flashcard-wizard"
 TAG="latest"
-CONTAINER_NAME="astro-app"
+CONTAINER_NAME="flashcard-wizard"
 ENV_FILE=""
 
 # Parse command line arguments
