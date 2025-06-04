@@ -52,6 +52,14 @@ async function cleanDatabase() {
     }
 
     for (const user of users.users) {
+      //filter out user techy_bolek@yahoo.com
+      if (user.email === 'techy_bolek@yahoo.com') {
+        console.log('Skipping user techy_bolek@yahoo.com');
+        continue;
+      }
+
+
+      console.log('Deleting user', user.email);
       const { error: deleteUserError } = await supabaseClient.auth.admin.deleteUser(user.id);
       if (deleteUserError) {
         console.error(`Error deleting user ${user.id}:`, deleteUserError);
