@@ -33,7 +33,6 @@ test-results
 # Docker
 Dockerfile
 .dockerignore
-docker-compose*.yml
 
 # Documentation
 README.md

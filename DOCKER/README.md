@@ -8,7 +8,6 @@ This directory contains Docker-related configuration files and scripts for build
 DOCKER/
 ├── Dockerfile          # Multi-stage Dockerfile for building the application
 ├── .dockerignore       # Specifies which files should be ignored during build
-├── docker-compose.yml  # Docker Compose configuration for local development
 ├── scripts/           
 │   ├── build.sh       # Script for building the Docker image
 │   └── run.sh         # Script for running the container
@@ -18,7 +17,6 @@ DOCKER/
 ## Prerequisites
 
 - Docker 24.0.0 or later
-- Docker Compose v2.20.0 or later
 - Bash shell (for running scripts)
 
 ## Environment Variables
@@ -82,13 +80,6 @@ These variables have default values but can be overridden:
 
 ## Run Instructions
 
-1. Using docker-compose:
-```bash
-# Create .env file first
-docker-compose -f DOCKER/docker-compose.yml up -d
-```
-
-2. Using run script:
 ```bash
 ./DOCKER/scripts/run.sh --tag latest --env-file .env
 ```
@@ -130,22 +121,14 @@ The build script looks for environment files in the following order:
 
 1. Build the image:
 ```bash
-# Using build script
 chmod +x DOCKER/scripts/build.sh
 ./DOCKER/scripts/build.sh --tag latest
-
-# Or using docker-compose
-docker-compose -f DOCKER/docker-compose.yml build
 ```
 
 2. Run the container:
 ```bash
-# Using run script
 chmod +x DOCKER/scripts/run.sh
 ./DOCKER/scripts/run.sh --tag latest --env-file .env
-
-# Or using docker-compose
-docker-compose -f DOCKER/docker-compose.yml up -d
 ```
 
 ## Health Checks

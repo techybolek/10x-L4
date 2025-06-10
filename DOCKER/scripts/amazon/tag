@@ -1,0 +1,1 @@
+docker tag bolek666/flashcard-wizard:latest 436970064176.dkr.ecr.us-east-2.amazonaws.com/bolek666/flashcard-wizard:latest
