@@ -19,7 +19,7 @@ export default defineConfig({
     ? cloudflare()
     : node({
         mode: "standalone",
-        //@ts-ignore not idea whyhe is complaining about this
+        //@ts-expect-error not idea why he is complaining about this
         host: '0.0.0.0',
         port: 3000
       }),

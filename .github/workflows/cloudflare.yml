@@ -100,6 +100,10 @@ jobs:
           curl -v http://localhost:3000/test-page 2>&1 | tee test-page-response.log
           echo "=== Recent server output ==="
           tail -n 50 server-output.log
+      - name: Run API tests
+        run: npm run test:api
+        env:
+          DEBUG: pw:api*
       - name: Run E2E tests
         run: npm run test:e2e
         env:
