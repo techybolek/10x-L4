@@ -70,7 +70,7 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
       - name: Build application
-        run: npm run build:local
+        run: npm run build
       - name: Start application
         run: |
           echo "Starting application with environment variables..."
@@ -186,7 +186,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build
+        run: npm run build:cloudflare
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
