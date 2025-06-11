@@ -30,7 +30,6 @@ export class OpenRouterClient {
         }
       }
 
-      console.log('OpenRouter options:', options);
       // Prepare request body - match the successful test pattern
       const requestBody = {
         model: options.model || this.config.defaultModel,
@@ -39,12 +38,14 @@ export class OpenRouterClient {
       };
 
       // Log request for debugging
-      console.log('OpenRouter request:', JSON.stringify(requestBody, null, 2));
+      console.log('OpenRouter request:', JSON.stringify(requestBody, null, 2).slice(0, 100));
 
       const response = await this.axiosInstance.post('', requestBody);
 
       // Log response for debugging
-      console.log('OpenRouter response:', JSON.stringify(response.data, null, 2));
+      // Only log first 100 chars of response for brevity
+      const truncatedResponse = JSON.stringify(response.data).slice(0, 100);
+      console.log('OpenRouter response:', truncatedResponse);
 
       return this.validateResponse(response.data);
     } catch (error: unknown) {

@@ -8,7 +8,6 @@ const loginSchema = z.object({
 });
 
 export const POST: APIRoute = async ({ request, cookies }) => {
-  console.log('login request begin');
   try {
     const body = await request.json();
     const { email, password } = loginSchema.parse(body);

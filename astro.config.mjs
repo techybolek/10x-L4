@@ -41,6 +41,10 @@ export default defineConfig({
         context: "server", 
         access: process.env.DEPLOYMENT_ENV === 'cloudflare' ? "secret" : "public"
       }),
+      MODEL: envField.string({ 
+        context: "server", 
+        access: "public" 
+      }),
     }
   },
   vite: {

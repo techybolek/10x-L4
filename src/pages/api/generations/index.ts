@@ -4,7 +4,7 @@ import type { GenerateFlashcardsCommand, GenerationResultDTO } from '../../../ty
 import { createServerSupabaseClient } from '@/lib/supabase';
 import { OpenRouterService } from '../../../lib/openrouter';
 //@ts-expect-error OPENROUTER_API_KEY is definned in env.d
-import { OPENROUTER_API_KEY } from 'astro:env/server';
+import { OPENROUTER_API_KEY, MODEL } from 'astro:env/server';
 
 export const prerender = false;
 
@@ -18,7 +18,7 @@ const commandSchema = z.object({
 // Initialize OpenRouter service
 const openRouterService = new OpenRouterService({
   apiKey: OPENROUTER_API_KEY,
-  defaultModel: 'gpt-4o-mini',
+  defaultModel: MODEL,
   maxRetries: 3,
   timeout: 60000,
   cacheEnabled: true
@@ -223,7 +223,7 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
       .from('generations')
       .insert({
         user_id: locals.user.id,
-        model: 'deepseek-reasoner',
+        model: MODEL,
         source_text_hash: sourceTextHash,
         source_text_length: parseResult.data.text.length,
         generated_count: aiResponse.stats.generated_count,
@@ -265,7 +265,7 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
         .from('generation_error_logs')
         .insert({
           user_id: locals.user.id,
-          model: 'deepseek-reasoner',
+          model: MODEL,
           source_text_hash: await calculateTextHash(parseResult.data.text),
           source_text_length: parseResult.data.text.length,
           error_code: 'GENERATION_ERROR',
