@@ -5,6 +5,8 @@ import FlashcardProposalsList from './FlashcardProposalsList';
 import ActionButtons from './ActionButtons';
 import ToastNotifications from './ToastNotifications';
 import { useFlashcardGeneration } from './hooks/useFlashcardGeneration';
+import { Button } from '../ui/button';
+import { SAMPLE_QUANTUM_COMPUTING_TEXT } from '../../assets/sampleContent';
 
 // Types for notifications
 interface Notification {
@@ -56,8 +58,23 @@ export default function FlashcardGenerationView() {
     setNotifications(prev => prev.filter(notification => notification.id !== id));
   };
 
+  // Function to load sample content
+  const handleLoadSample = () => {
+    setText(SAMPLE_QUANTUM_COMPUTING_TEXT);
+  };
+
   return (
     <div className="flex flex-col gap-6">
+      <div className="flex justify-end">
+        <Button 
+          onClick={handleLoadSample}
+          variant="outline"
+          className="mb-4"
+        >
+          Load Sample Content
+        </Button>
+      </div>
+      
       <TextInputForm 
         text={text}
         setText={setText}

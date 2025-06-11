@@ -30,6 +30,7 @@ export class OpenRouterClient {
         }
       }
 
+      console.log('OpenRouter options:', options);
       // Prepare request body - match the successful test pattern
       const requestBody = {
         model: options.model || this.config.defaultModel,
