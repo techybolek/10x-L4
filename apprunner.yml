@@ -1,0 +1,41 @@
+version: 1.0
+runtime: nodejs20
+build:
+  commands:
+    build:
+      - echo "Installing dependencies..."
+      - npm ci
+      - echo "Building application..."
+      - npm run build
+  env:
+    - name: NODE_ENV
+      value: "production"
+    - name: DEPLOYMENT_ENV
+      value: "node"
+    # Required environment variables for build
+    # These values will be injected from App Runner service configuration
+    - name: SITE_URL
+    - name: SUPABASE_URL
+    - name: SUPABASE_KEY
+    - name: OPENROUTER_API_KEY
+    - name: MODEL
+run:
+  runtime-version: 20
+  command: npm start
+  network:
+    port: 3000
+    env: PORT
+  env:
+    - name: NODE_ENV
+      value: "production"
+    - name: DEPLOYMENT_ENV
+      value: "node"
+    - name: PORT
+      value: "3000"
+    # Runtime environment variables
+    # These values will be injected from App Runner service configuration
+    - name: SITE_URL
+    - name: SUPABASE_URL
+    - name: SUPABASE_KEY
+    - name: OPENROUTER_API_KEY
+    - name: MODEL 
