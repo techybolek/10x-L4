@@ -21,7 +21,7 @@ build:
     - name: MODEL
 run:
   runtime-version: 20
-  command: npm start
+  command: npm run preview
   network:
     port: 3000
     env: PORT
