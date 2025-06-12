@@ -135,6 +135,7 @@ jobs:
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       SITE_URL: 'https://10x-l4.pages.dev'
+      MODEL: ${{ vars.MODEL }}
       NODE_VERSION: "20"
 
     steps:
