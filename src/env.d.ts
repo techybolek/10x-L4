@@ -18,6 +18,7 @@ interface ImportMetaEnv {
   readonly OPENROUTER_API_KEY: string;
   readonly SITE_URL: string;
   readonly ENABLE_TEST_CLEANUP?: string;
+  readonly MODEL: string;
 }
 
 interface ImportMeta {

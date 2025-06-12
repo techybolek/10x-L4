@@ -10,13 +10,15 @@ ARG SITE_URL=http://localhost:3000
 ARG SUPABASE_URL
 ARG SUPABASE_KEY
 ARG OPENROUTER_API_KEY
+ARG MODEL
 
 # Validate required build args
-RUN if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ] || [ -z "$OPENROUTER_API_KEY" ]; then \
+RUN if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ] || [ -z "$OPENROUTER_API_KEY" ] || [ -z "$MODEL" ]; then \
     echo "Error: Required build arguments are missing" && \
     echo "SUPABASE_URL: ${SUPABASE_URL:+set}" && \
     echo "SUPABASE_KEY: ${SUPABASE_KEY:+set}" && \
     echo "OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:+set}" && \
+    echo "MODEL: ${MODEL:+set}" && \
     exit 1; \
     fi
 
@@ -26,7 +28,8 @@ ENV NODE_ENV=$NODE_ENV \
     SITE_URL=$SITE_URL \
     SUPABASE_URL=$SUPABASE_URL \
     SUPABASE_KEY=$SUPABASE_KEY \
-    OPENROUTER_API_KEY=$OPENROUTER_API_KEY
+    OPENROUTER_API_KEY=$OPENROUTER_API_KEY \
+    MODEL=$MODEL
 
 # Set working directory
 WORKDIR /app

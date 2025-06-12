@@ -32,7 +32,7 @@ load_env_file() {
 # Function to validate required variables
 validate_env_vars() {
     local missing_vars=()
-    local required_vars=("SUPABASE_URL" "SUPABASE_KEY" "OPENROUTER_API_KEY")
+    local required_vars=("SUPABASE_URL" "SUPABASE_KEY" "OPENROUTER_API_KEY" "MODEL")
 
     for var in "${required_vars[@]}"; do
         if [[ -z "${!var}" ]]; then
@@ -53,6 +53,7 @@ validate_env_vars() {
         echo "SUPABASE_URL=your-project-url"
         echo "SUPABASE_KEY=your-project-key"
         echo "OPENROUTER_API_KEY=your-api-key"
+        echo "MODEL=your-model-name"
         return 1
     fi
 }
@@ -116,6 +117,7 @@ echo "  SITE_URL=${SITE_URL:-http://localhost:3000}"
 echo "  SUPABASE_URL=<set>"
 echo "  SUPABASE_KEY=<set>"
 echo "  OPENROUTER_API_KEY=<set>"
+echo "  MODEL=<set>"
 
 # Build the Docker image
 docker build \
@@ -127,6 +129,7 @@ docker build \
     --build-arg SUPABASE_URL="${SUPABASE_URL}" \
     --build-arg SUPABASE_KEY="${SUPABASE_KEY}" \
     --build-arg OPENROUTER_API_KEY="${OPENROUTER_API_KEY}" \
+    --build-arg MODEL="${MODEL}" \
     "${PROJECT_ROOT}"
 
 echo "Build complete: ${IMAGE_NAME}:${TAG}" 

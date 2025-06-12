@@ -1,0 +1,6 @@
+D=DOCKER/scripts
+$D/build.sh
+$D/docker_push
+$D/docker_tag
+$D/amazon/tag
+$D/amazon/push
