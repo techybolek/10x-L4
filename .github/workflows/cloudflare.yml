@@ -48,6 +48,7 @@ jobs:
       TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       SITE_URL: 'http://localhost:3000'
+      MODEL: ${{ vars.MODEL }}
       NODE_ENV: test
     steps:
       - uses: actions/checkout@v4
